@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Build + Run Compiler",
+      "type": "cppdbg",
+      "request": "launch",
+
+      "program": "C:\\Windows\\System32\\cmd.exe",
+      "args": [
+        "/k",
+        "gcc      src/main.c src/printing.c src/isa.c src/instruction_builder.c       -o build\\lambda_compiler.exe &&      build\\lambda_compiler.exe scripts/example_assembly.asm out/a.bin --ab                       & pause & exit"
+      ],
+
+      "cwd": "${workspaceFolder}",
+      "externalConsole": true,
+      "stopAtEntry": false
+    }
+  ]
+}
