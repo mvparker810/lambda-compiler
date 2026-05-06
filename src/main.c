@@ -13,7 +13,7 @@ gcc main.c -o ../build/lmda.exe
 
 #include "isa.h"
 #include "instruction_builder.h"
-
+#include "lambdacompiler.h"
 
 
 
@@ -34,6 +34,8 @@ gcc main.c -o ../build/lmda.exe
 
 
 int parse_args(int argc, char *argv[], Lambda_Worker* meta) {
+
+
     if (argc != 4) {
         printf("Usage: %s <input> <output> <mode>\n\n", argv[0]);
         puts("<input>: Path to the input file");
@@ -96,18 +98,35 @@ int main(int argc, char *argv[]) {
 
     WRKING_DATA.program = LambdaProgram_INIT(1024);
 
-    char instr[32]; int line = 0;
-    while (fgets(instr, sizeof(instr), WRKING_DATA.input_file)) {
-        int r = LambdaProgram_APPEND_FROMASM(&WRKING_DATA, instr);
-        if (r && r != ERRORCODE_EMPTYLINE) {
-            printing_logtime(START_TIME);
-            printf("ERROR [LINE %d] : %s\n", line, WRKING_DATA.error_out);
-            exit = 1; goto exit;
-        }
+    switch (WRKING_DATA.compilation_mode) {
+        case CMP_AB: {
+            char instr[5092]; int line = 0;
+            while (fgets(instr, sizeof(instr), WRKING_DATA.input_file)) {
+                int r = LambdaProgram_APPEND_FROMASM(&WRKING_DATA, instr);
+                if (r && r != ERRORCODE_EMPTYLINE) {
+                    printing_logtime(START_TIME);
+                    printf("ERROR [LINE %d] : %s\n", line, WRKING_DATA.error_out);
+                    exit = 1; goto exit;
+                }
 
-        line++;
+                line++;
+            }
+        } break;
+        case CMP_SA:
+            LMBACOMPILER_INIT(512);
 
+
+
+            LMBACOMPILER_TOKENIZE(&WRKING_DATA);
+            LMBACOMPILER_PARSE(&WRKING_DATA);
+            LMBACOMPILER_ANALYZE(&WRKING_DATA);
+            LMBACOMPILER_GENERATE(&WRKING_DATA);
+
+            LMBACOMPILER_FREE();
+        break;
     }
+
+    
  
 
 

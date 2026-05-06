@@ -1,0 +1,9 @@
+#pragma once
+
+void LMBACOMPILER_TOKENIZE(Lambda_Worker *WRKING_DATA);
+void LMBACOMPILER_PARSE(Lambda_Worker* WRKING_DATA);
+void LMBACOMPILER_ANALYZE(Lambda_Worker* WRKING_DATA);
+void  LMBACOMPILER_GENERATE(Lambda_Worker* WRKING_DATA);
+
+void LMBACOMPILER_INIT(size_t lexer_init);
+void LMBACOMPILER_FREE();

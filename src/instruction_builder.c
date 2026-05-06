@@ -39,9 +39,12 @@ uint8_t LambdaInstr_ToByte(LambdaInstr instr) {
         case OP_NAND:
         case OP_STORE:
         case OP_MEMREAD:
-        case OP_MEMWRITE: 
-        case OP_LOAD: 
+        case OP_MEMWRITE:
             byte |= (instr.arg & 0x07);
+        break;
+
+        case OP_LOAD:
+            byte |= (instr.arg & 0x0F);
         break;
 
         case OP_LSR:
@@ -61,10 +64,10 @@ int LambdaInstr_Deserialize(Lambda_Worker* WRKING_DATA, const char* instruction,
     while (*instruction && isspace((unsigned char)*instruction)) instruction++;
     if (*instruction == '\0') return ERRORCODE_EMPTYLINE;
     if (*instruction == '#' || *instruction == '/') return ERRORCODE_EMPTYLINE; //allow comments
-    printf("Pasring instruction: \"%s\"\n", instruction);
 
-    char buf[32];
-    
+
+    char buf[256];
+
     if (len >= sizeof(buf)) {
         snprintf(WRKING_DATA->error_out, ERROR_OUT_CAP, "Instruction too long: %zu characters (max %zu)", len, sizeof(buf) - 1);
         return 1;
@@ -72,9 +75,14 @@ int LambdaInstr_Deserialize(Lambda_Worker* WRKING_DATA, const char* instruction,
     memcpy(buf, instruction, len + 1);
     buf[len] = '\0';
 
+    // Strip inline comments (// or #)
+    for (char* s = buf; *s; ++s) {
+        if (*s == '#' || (*s == '/' && *(s+1) == '/')) { *s = '\0'; break; }
+    }
+
     char *argv[4];
     char* s = buf; for (; *s; ++s) *s = (char)toupper((unsigned char)*s);
-   
+
     int argc = split_ws_inplace(buf, argv, 4);
     if (argc < 0) {
         snprintf(WRKING_DATA->error_out, ERROR_OUT_CAP, "Too many tokens | \"%s\"", buf);

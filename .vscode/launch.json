@@ -3,18 +3,25 @@
   "configurations": [
     {
       "name": "Build + Run Compiler",
-      "type": "cppdbg",
+      "type": "node-terminal",
       "request": "launch",
-
-      "program": "C:\\Windows\\System32\\cmd.exe",
-      "args": [
-        "/k",
-        "gcc      src/main.c src/printing.c src/isa.c src/instruction_builder.c       -o build\\lambda_compiler.exe &&      build\\lambda_compiler.exe scripts/example_assembly.asm out/a.bin --ab                       & pause & exit"
-      ],
-
-      "cwd": "${workspaceFolder}",
-      "externalConsole": true,
-      "stopAtEntry": false
+      //"command": "cmd /c \"gcc src/main.c src/printing.c src/isa.c src/instruction_builder.c src/lambdacompiler.c -o build\\lambda_compiler.exe && build\\lambda_compiler.exe scripts/example_source.txt out/a.asm --sa\"",
+      "command": "cmd /c \"gcc src/main.c src/printing.c src/isa.c src/instruction_builder.c src/lambdacompiler.c -o build/lambda_compiler.exe && build\\lambda_compiler.exe scripts/example_assembly.asm out/a.bin --ab\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "BOM Script",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cmd /c \"gcc BOM.c -o build/BOM.exe && build/BOM.exe\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "ROM I/O Interface",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cmd /c \"gcc rom_writer_interface/writer_cli.c rom_writer_interface/rom_writer.c -o build/ROMIO.exe && build/ROMIO.exe\"",
+      "cwd": "${workspaceFolder}"
     }
   ]
 }
